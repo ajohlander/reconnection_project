@@ -1,4 +1,4 @@
-function [fLMN] = plot_disc(b1,b2,b3,b4,t)
+function [fLMN,h] = plot_disc(b1,b2,b3,b4,t)
 %PLOT_DISC Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -7,14 +7,14 @@ function [fLMN] = plot_disc(b1,b2,b3,b4,t)
 %---------------Figure-------------------
 fLMN = irf_plot(3,'newfigure');
 set(gcf,'PaperUnits','centimeters')
-xSize = 15; ySize = 8;
+xSize = 15; ySize = 20;
 xLeft = (21-xSize)/2; yTop = (30-ySize)/2;
 set(gcf,'PaperPosition',[xLeft yTop xSize ySize])
 set(gcf,'Position',[10 10 xSize*50 ySize*50])
 set(gcf,'paperpositionmode','auto') % to get the same printing as on screen
 clear xLeft xSize sLeft ySize yTop
 
-h = zeros(1,3);
+h = zeros(1,4);
 
 h(1) = irf_panel('L');
 h(2) = irf_panel('M');
@@ -23,6 +23,7 @@ hold(h(1))
 hold(h(2))
 hold(h(3))
 
+title(h(1),{' ';' ';' '});
 %t = zeros(1,4); %for no time-shift
 
 % Maximum
@@ -49,14 +50,28 @@ plot(h(1),[b1(1,1)-1,b1(end,1)+1],[0,0],'k--')
 plot(h(2),[b1(1,1)-1,b1(end,1)+1],[0,0],'k--')
 plot(h(3),[b1(1,1)-1,b1(end,1)+1],[0,0],'k--')
 
+% 
+% xlim(h(1),[b1(1,1)-.5,b1(end,1)+.5])
+% xlim(h(2),[b1(1,1)-.5,b1(end,1)+.5])
+% xlim(h(3),[b1(1,1)-.5,b1(end,1)+.5])
 
-xlim(h(1),[b1(1,1)-.5,b1(end,1)+.5])
-xlim(h(2),[b1(1,1)-.5,b1(end,1)+.5])
-xlim(h(3),[b1(1,1)-.5,b1(end,1)+.5])
+%Labels
+ylabel(h(1),'B_{L} [nT]','FontSize',16)
+ylabel(h(2),'B_{M} [nT]','FontSize',16)
+ylabel(h(3),'B_{N} [nT]','FontSize',16)
+
+%No tick labels for the first two panels
+set(h(1),'XTickLabel',[])
+set(h(2),'XTickLabel',[])
+
+%Set time interval of axes
+xlim(h(1),[b1(1,1),b1(end,1)])
+xlim(h(2),[b1(1,1),b1(end,1)])
+xlim(h(3),[b1(1,1),b1(end,1)])
 
 irf_timeaxis(h(3))
 
-clear h fn
+%clear h fn
 
 end
 
