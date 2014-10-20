@@ -1,4 +1,4 @@
-function [V] = disc_timing(b1,b2,b3,b4,r1,r2,r3,r4,M,nCluster)
+function [V] = disc_timing(b1,b2,b3,b4,R,M,nCluster)
 %DISC_TIMING Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -21,15 +21,15 @@ bCut3 = b3(M(1):M(2),:);
 bCut4 = b4(M(1):M(2),:);
 
 % Correlation function for velocity calculation
-[V,dV] = c_4_v_xcorr([bCut(1,1),bCut(end,1)],b1,b2,b3,b4,r1,r2,r3,r4)
+[V,dV] = c_4_v_xcorr([bCut(1,1),bCut(end,1)],b1,b2,b3,b4,R.R1,R.R2,R.R3,R.R4);
 
 % Calculating time difference from velocity and position
-rInd = find_closest_index(bCut1(1,1),r1(:,1));
+rInd = find_closest_index(bCut1(1,1),R.R1(:,1));
 
-R1 = r1(rInd,2:4);
-R2 = r2(rInd,2:4);
-R3 = r3(rInd,2:4);
-R4 = r4(rInd,2:4);
+R1 = R.R1(rInd,2:4);
+R2 = R.R2(rInd,2:4);
+R3 = R.R3(rInd,2:4);
+R4 = R.R4(rInd,2:4);
 
 switch nCluster
     case 1
