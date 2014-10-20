@@ -1,6 +1,27 @@
-function out=c_4_v_timing_mva(x1,x2,x3,x4,R,column)
-%C_4_TIMING_MVA Summary of this function goes here
-%   Detailed explanation goes here
+function [V,dV,n,v,l]=c_4_v_timing_mva(x1,x2,x3,x4,R,column)
+%C_4_V_TIMING_MVA Performs timing and minimum variance analysis on four s/c
+%field data with a graphical user interface.
+%   C_4_V_TIMING_MVA(b1,b2,b3,b4,R,column) interactive discontinuity
+%   analysis analyzer on magnetic field b1,...b4 with position R using
+%   column number 'column'. R has the form R.R1,...R.R4.
+%   C_4_V_TIMING_MVA('B?',R) uses B1, B2, B3 and B4 from workspace
+%   C_4_V_TIMING_MVA('B?',R, column) also uses column. 2=x, 3=y, 4=z.
+%   
+%   The user is asked to define an interval in which the discontinuity
+%   analysis should be made. Two new figures open when this is done. 
+%   In the first window, the normal vectors obtained from MVA and timing is
+%   shown in 3D space. Normal vectors that do not fulfill l2/l3>5 is shown
+%   as dotted arrows. The dotted arrows are not used in determining the
+%   maximum angle.
+%   In the second figure, the magnetic field is plotted in the
+%   LMN-system, where L=maximum, M=intermiediate and N = minimum.
+%   
+%   A prompt asks the user to save the variables: velocity of discontinuity V,
+%   uncertainty in velocity dV, all 5 normal vectors in n, where
+%   n.nTiming is the normal vector from timing and n.n1,...n4 is normal
+%   vectors obtained from MVA, all vectors from MVA v, and eigenvalues from
+%   MVA. The variables do not appear until the main figure is closed. 
+
 
 
 % Getting parameters
@@ -96,9 +117,18 @@ irf_timeaxis(h)
 
 
 while true
-    nFig = get(fGUI,'Parent')
+    nFig = get(fGUI,'Parent');
     figure(nFig{1})
-    [x,~] = ginput(2);
+    
+    clear x
+    try
+        [x,~] = ginput(2);
+    catch
+        disp('Window closed');
+        return
+    end
+    
+
     if (exist('a','var')==1)
         delete(a)
     end
@@ -136,10 +166,17 @@ while true
     end
     
     
-    v = disc_timing(b1,b2,b3,b4,R,M,nCluster);
-        
+    [V,dV,n,v,l] = disc_timing(b1,b2,b3,b4,R,M,nCluster);
     
-    out = v;
+    checkLabels = {'Save velocity to variable named:' ...
+        'Save dV to variable named:' 'Save normal vectors to variable named:'...
+        'Save MVA matrices to variable named:' 'Save MVA eigenvalues to variable named:'};
+    varNames = {'V','dV','n','v','l'};
+    items = {V,dV,n,v,l};
+    export2wsdlg(checkLabels,varNames,items,...
+        'Save outputs to Workspace');
+    
+    %    out = [V,dV,n,v,l];
     
 end
 

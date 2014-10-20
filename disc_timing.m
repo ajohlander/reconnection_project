@@ -1,4 +1,4 @@
-function [V] = disc_timing(b1,b2,b3,b4,R,M,nCluster)
+function [V,dV,n,v,L] = disc_timing(b1,b2,b3,b4,R,M,nCluster)
 %DISC_TIMING Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -19,6 +19,8 @@ bCut1 = b1(M(1):M(2),:);
 bCut2 = b2(M(1):M(2),:);
 bCut3 = b3(M(1):M(2),:);
 bCut4 = b4(M(1):M(2),:);
+
+%Possible bug: c_4_v_xcorr interpolates R, might be too few points.
 
 % Correlation function for velocity calculation
 [V,dV] = c_4_v_xcorr([bCut(1,1),bCut(end,1)],b1,b2,b3,b4,R.R1,R.R2,R.R3,R.R4);
@@ -100,10 +102,26 @@ if theta4>90
     nMVA4 = -nMVA4;
 end
 
-
-% n = [];
-% n.nTiming = nTiming;
-
+% Outputs
+% normal vector
+n = [];
+n.nTiming = nTiming;
+n.n1 = nMVA1;
+n.n2 = nMVA2;
+n.n3 = nMVA3;
+n.n4 = nMVA4;
+% eigenvalues
+L = [];
+L.l1 = l1;
+L.l2 = l2;
+L.l3 = l3;
+L.l4 = l4;
+% all vectors
+v = [];
+v.v1 = v_minvar1;
+v.v2 = v_minvar2;
+v.v3 = v_minvar3;
+v.v4 = v_minvar4;
 
 
 % ----------Plotting the arrows-----------
@@ -117,15 +135,30 @@ fArrow = irf_plot(1,'newfigure');
 hold(fArrow);
 axis equal
 
-
+ar = zeros(1,4);
 firstArrow = arrow(R./Re,(R+nTiming*arrLength)./Re,'FaceColor',arrColor(5,:),'EdgeColor',arrColor(5,:));
-arrow(R1./Re,(R1+nMVA1*arrLength)./Re,'FaceColor',arrColor(1,:),'EdgeColor',arrColor(1,:))
-arrow(R2./Re,(R2+nMVA2*arrLength)./Re,'FaceColor',arrColor(2,:),'EdgeColor',arrColor(2,:))
-arrow(R3./Re,(R3+nMVA3*arrLength)./Re,'FaceColor',arrColor(3,:),'EdgeColor',arrColor(3,:))
-arrow(R4./Re,(R4+nMVA4*arrLength)./Re,'FaceColor',arrColor(4,:),'EdgeColor',arrColor(4,:))
+ar(1) = arrow(R1./Re,(R1+nMVA1*arrLength)./Re,'FaceColor',arrColor(1,:),'EdgeColor',arrColor(1,:));
+ar(2) = arrow(R2./Re,(R2+nMVA2*arrLength)./Re,'FaceColor',arrColor(2,:),'EdgeColor',arrColor(2,:));
+ar(3) = arrow(R3./Re,(R3+nMVA3*arrLength)./Re,'FaceColor',arrColor(3,:),'EdgeColor',arrColor(3,:));
+ar(4) = arrow(R4./Re,(R4+nMVA4*arrLength)./Re,'FaceColor',arrColor(4,:),'EdgeColor',arrColor(4,:));
+
 
 delete(firstArrow) %First arrow becomes wierd
 arrow(R./Re,(R+nTiming*arrLength)./Re,'FaceColor',arrColor(5,:),'EdgeColor',arrColor(5,:))
+
+% check if l2/l3 is ok for each s/c.
+eigLim = 5; %Minimum value for l2/l3
+mvaOK = zeros(1,5);
+mvaOK([l1(2)/l1(3),l2(2)/l2(3),l3(2)/l3(3),l4(2)/l4(3)]>eigLim) = 1;
+mvaOK(5) = 1; %Timing is always OK
+for i = 1:4
+    if mvaOK(i)
+        set(ar(i),'LineWidth',1)
+    else
+        set(ar(i),'LineStyle',':')
+    end
+end
+
 
 %plot the positions of the s/c
 plot3(R1(1)/Re,R1(2)/Re,R1(3)/Re,'ko')
@@ -145,11 +178,11 @@ irf_legend(gca,{'C1','C2','C3','C4','Timing',},[0.00, 1.00]);
 
 %Maximum angle between the normal vectors
 thetaMax = 0;
-nMatrix = [nTiming;nMVA1;nMVA2;nMVA3;nMVA4];
+nMatrix = [nMVA1;nMVA2;nMVA3;nMVA4;nTiming];
 
 for i = 1:5
     for j = 1:5
-        if i~=j
+        if (i~=j && mvaOK(i) && mvaOK(j))
             theta = acosd(dot(nMatrix(i,:),nMatrix(j,:)));
             if theta>thetaMax
                 thetaMax = theta;
