@@ -34,7 +34,7 @@ tint = [b1(1,1),b1(end,1)];
 
 
 %---------------GUI-------------------
-irf_plot(4,'newfigure');
+fGUI = irf_plot(4,'newfigure');
 set(gcf,'PaperUnits','centimeters')
 xSize = 15; ySize = 15;
 xLeft = (21-xSize)/2; yTop = (30-ySize)/2;
@@ -96,7 +96,8 @@ irf_timeaxis(h)
 
 
 while true
-    figure(1)
+    nFig = get(fGUI,'Parent')
+    figure(nFig{1})
     [x,~] = ginput(2);
     if (exist('a','var')==1)
         delete(a)
