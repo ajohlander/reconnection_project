@@ -6,9 +6,9 @@ function [bLMN] = xyz2lmn(b,v)
 bLMN = zeros(size(b));
 
 bLMN(:,1) = b(:,1);
-bLMN(:,2) = b(:,2:4)*v(:,1);
-bLMN(:,3) = b(:,2:4)*v(:,2);
-bLMN(:,4) = b(:,2:4)*v(:,3);
+bLMN(:,2) = b(:,2:4)*v(1,:)';
+bLMN(:,3) = b(:,2:4)*v(2,:)';
+bLMN(:,4) = b(:,2:4)*v(3,:)';
 
 
 end
