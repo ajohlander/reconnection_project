@@ -75,10 +75,11 @@ hold(h(3))
 hold(h(4))
 
 %Bz
-plot(h(1),b1(:,1),b1(:,column))
-plot(h(2),b2(:,1),b2(:,column))
-plot(h(3),b3(:,1),b3(:,column))
-plot(h(4),b4(:,1),b4(:,column))
+pb = zeros(1,4);
+pb(1) = plot(h(1),b1(:,1),b1(:,column));
+pb(2) = plot(h(2),b2(:,1),b2(:,column));
+pb(3) = plot(h(3),b3(:,1),b3(:,column));
+pb(4) = plot(h(4),b4(:,1),b4(:,column));
 
 %line at 0
 fLine = plot(h(1),tint,[0,0]);
@@ -163,8 +164,10 @@ while true
     for i = 1:4
         a(i) = area(h(i),[b(M(1,1),1) b(M(1,2),1)], [maxB maxB],-maxB, 'FaceColor', [0.5,1,0.5]);
         set(a(i),'EdgeColor','none')
+        uistack(pb(i),'top')
     end
     
+   
     
     [V,dV,n,v,l] = disc_timing(b1,b2,b3,b4,R,M,nCluster);
     

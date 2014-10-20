@@ -194,6 +194,14 @@ arrStr1 = ['V = [', num2str(V),'] \pm ','[', num2str(dV),']'];
 arrStr2 =  ['Maximum normal deviation = ', num2str(thetaMax), '^{o}'];
 title({arrStr1;arrStr2})
 
+%eigStr = [num2str(l1(2)/l1(3)),num2str(l2(2)/l2(3)),' ',...
+%    num2str(l3(2)/l3(3)),' ',num2str(l4(2)/l4(3))];
+
+irf_legend({'l_2/l_3'},[0.90 1.00])
+%set(gca,'ColorOrder',arrColor)
+irf_legend({num2str(l1(2)/l1(3)),num2str(l2(2)/l2(3)),...
+    num2str(l3(2)/l3(3)),num2str(l4(2)/l4(3))},[1.00, 0.95])
+
 %---------------------------------------------------------------
 
 
@@ -203,7 +211,7 @@ title({arrStr1;arrStr2})
 [~,h] = plot_disc(bLMN1,bLMN2,bLMN3,bLMN4,tDiff);
 
 LMNstr1 = ['s/c ', num2str(nCluster), '     ', 'l2/l3 = ', num2str(l(2)/l(3))];
-LMNstr2 = ['n_{mivar} = [', num2str(v_minvar(3,:)),'] '];
+LMNstr2 = ['n_{minvar} = [', num2str(v_minvar(3,:)),'] '];
 LMNstr3 = ['n_{timing} = [' num2str(V/norm(V)),']'];
 
 
