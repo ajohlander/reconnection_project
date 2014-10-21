@@ -1,11 +1,14 @@
-function [fLMN,h] = plot_disc(b1,b2,b3,b4,t)
-%PLOT_DISC Summary of this function goes here
-%   Detailed explanation goes here
-
+function [f,h] = plot_disc(b1,b2,b3,b4,t)
+%PLOT_DISC Plots time shifted magnetic field in a LMN-frame.
+%   PLOT_DISC(b1,b2,b3,b4,t) plots the magnetic field in LMN-frame given
+%   magnetic field in LMN-frame b1,...b4 and a time vector with time
+%   differences t.
+%   [f,h] = PLOT_DISC(b1,b2,b3,b4,t) returns th figure handle f and a 
+%   vector of axes handles h=[h(1),h(2),h(3)] for the panels.
 
 
 %---------------Figure-------------------
-fLMN = irf_plot(3,'newfigure');
+f = irf_plot(3,'newfigure');
 set(gcf,'PaperUnits','centimeters')
 xSize = 15; ySize = 20;
 xLeft = (21-xSize)/2; yTop = (30-ySize)/2;
@@ -50,11 +53,6 @@ plot(h(1),[b1(1,1)-1,b1(end,1)+1],[0,0],'k--')
 plot(h(2),[b1(1,1)-1,b1(end,1)+1],[0,0],'k--')
 plot(h(3),[b1(1,1)-1,b1(end,1)+1],[0,0],'k--')
 
-% 
-% xlim(h(1),[b1(1,1)-.5,b1(end,1)+.5])
-% xlim(h(2),[b1(1,1)-.5,b1(end,1)+.5])
-% xlim(h(3),[b1(1,1)-.5,b1(end,1)+.5])
-
 %Labels
 ylabel(h(1),'B_{L} [nT]','FontSize',16)
 ylabel(h(2),'B_{M} [nT]','FontSize',16)
@@ -71,7 +69,6 @@ xlim(h(3),[b1(1,1),b1(end,1)])
 
 irf_timeaxis(h(3))
 
-%clear h fn
 
 end
 

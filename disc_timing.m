@@ -1,6 +1,6 @@
 function [V,dV,n,v,L] = disc_timing(b1,b2,b3,b4,R,M,nCluster)
-%DISC_TIMING Summary of this function goes here
-%   Detailed explanation goes here
+%DISC_TIMING Performes timing and MVA for magnetic field data.
+%   [V,dV,n,v,L] = DISC_TIMING(b1,b2,b3,b4,R,M,nCluster) 
 
 
 switch nCluster

@@ -1,6 +1,8 @@
 function [bLMN] = xyz2lmn(b,v)
-%XYZ2LMN Summary of this function goes here
-%   Detailed explanation goes here
+%XYZ2LMN Coordinate transformation from GSE or GSM to a LMN-frame.
+%   [bLMN] = XYZ2LMN(b,v) returns the magnetic field in a minimum variance
+%   frame bLMN given magnetic field data 'b' and a matrix 'v' containing the
+%   eigenvectors from minimum variance analysis.
 
 
 bLMN = zeros(size(b));
