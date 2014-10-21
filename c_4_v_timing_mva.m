@@ -398,7 +398,7 @@ irf_legend({num2str(l1(2)/l1(3)),num2str(l2(2)/l2(3)),...
 
 LMNstr1 = ['s/c ', num2str(nCluster), '     ', 'l2/l3 = ', num2str(l(2)/l(3))];
 LMNstr2 = ['n_{minvar} = [', num2str(v_minvar(3,:)),'] '];
-LMNstr3 = ['v = ',num2str(norm(V)),' * [', num2str(V/norm(V)),'] km/s'];
+LMNstr3 = ['n_{timing} = [', num2str(V/norm(V)),']'];
 
 
 title(h(1),{LMNstr1;[LMNstr2,LMNstr3]})
