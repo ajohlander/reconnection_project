@@ -1,9 +1,12 @@
 clear all
 
 %%----------Download---------
-
+% Magnetosheath
 %tint = [irf_time([2002 03 27 10 16 00]) irf_time([2002 03 27 10 17 30])];
+% Magnetopause
 tint = [irf_time([2002 02 20 13 21 00]) irf_time([2002 02 20 13 23 00])];
+% Magnetotail
+%tint = [irf_time([2003 08 24 18 43 00]) irf_time([2003 08 24 18 44 30])];
 
 %B-field
 caa_download(tint,'C?_CP_FGM_FULL');
