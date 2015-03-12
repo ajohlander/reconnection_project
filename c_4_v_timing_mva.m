@@ -1,4 +1,4 @@
-function out = c_4_v_timing_mva(x1,x2,x3,x4,R,column)
+function out = c_4_v_timing_mva(x1,x2,x3,x4,R,col)
 %C_4_V_TIMING_MVA Performs timing and minimum variance analysis on four s/c
 %field data with a graphical user interface.
 %   C_4_V_TIMING_MVA(b1,b2,b3,b4,R,column) interactive discontinuity
@@ -61,6 +61,9 @@ elseif(nargin ==5 || nargin ==6)    %Input (b1,b2,b3,b4,R/'R?',...)
         evalin('base',['if ~exist(''' irf_ssub(var_strR,1) '''), c_load(''' var_strR ''');end' ]);
         c_eval('R.R?=evalin(''base'',irf_ssub(var_strR,?));');
     end % R
+    if(nargin == 6)
+        column = col;
+    end
 end
 
 if(column == 0) % Not in input
