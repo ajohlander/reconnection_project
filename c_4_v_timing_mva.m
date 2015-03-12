@@ -5,7 +5,9 @@ function out = c_4_v_timing_mva(x1,x2,x3,x4,R,column)
 %   analysis analyzer on magnetic field b1,...b4 with position R using
 %   column number 'column'. R has the form R.R1,...R.R4.
 %   C_4_V_TIMING_MVA('B?',R) uses B1, B2, B3 and B4 from workspace
-%   C_4_V_TIMING_MVA('B?',R, column) also uses column. 2=x, 3=y, 4=z.
+%   C_4_V_TIMING_MVA('B?',R, column) also uses column for selecting the
+%   component of the magnetic field. 2=x, 3=y, 4=z. If
+%   column is not passed as an argument, the default value is 2.
 %
 %   The user is asked to define an interval in which the discontinuity
 %   analysis should be made. Two new figures open when this is done.
@@ -24,31 +26,46 @@ function out = c_4_v_timing_mva(x1,x2,x3,x4,R,column)
 
 
 
+column = 0;
+
 % Getting parameters
-if(nargin<=3 && ischar(x1)), % either action as parameter or string variable
-    if strfind(x1,'?')
-        var_str = x1;
-        
-        evalin('base',['if ~exist(''' irf_ssub(var_str,1) '''), c_load(''' var_str ''');end' ]);
-        c_eval('b?=evalin(''base'',irf_ssub(var_str,?));');
+if(nargin == 2 || nargin == 3 ) % Input ('B?', 'R?',...) or ('B?', R,...)
+    
+    if(ischar(x1) && strfind(x1,'?')) % 'B?'
+        var_strB = x1;
+        evalin('base',['if ~exist(''' irf_ssub(var_strB,1) '''), c_load(''' var_strB ''');end' ]);
+        c_eval('b?=evalin(''base'',irf_ssub(var_strB,?));');
     end
     
-    if nargin == 2
-        column = 2;
-    elseif nargin == 3
+    if(ischar(x2))
+        if(strfind(x2,'?'))
+            var_strR = x2;
+            evalin('base',['if ~exist(''' irf_ssub(var_strR,1) '''), c_load(''' var_strR ''');end' ]);
+            c_eval('R.R?=evalin(''base'',irf_ssub(var_strR,?));');
+        end
+    else % R
         R = x2;
-        column = x3;
-    end;
-    
-elseif   (nargin ==4) || (nargin == 5)
-    if nargin==4
-        irf.log('notice','Using second column');column=2;
     end
+    
+    if(nargin == 3)
+        column = x3;
+    end
+        
+elseif(nargin ==5 || nargin ==6)    %Input (b1,b2,b3,b4,R/'R?',...)
     b1 = x1;
     b2 = x2;
     b3 = x3;
     b4 = x4;
-    
+    if(ischar(R) && strfind(R,'?'))
+        var_strR = R;
+        evalin('base',['if ~exist(''' irf_ssub(var_strR,1) '''), c_load(''' var_strR ''');end' ]);
+        c_eval('R.R?=evalin(''base'',irf_ssub(var_strR,?));');
+    end % R
+end
+
+if(column == 0) % Not in input
+    irf.log('notice','Using second column');
+    column = 2; % x is the default column.
 end
 
 tint = [b1(1,1),b1(end,1)];
@@ -74,7 +91,7 @@ hold(h(2))
 hold(h(3))
 hold(h(4))
 
-%Bz
+%Bcolumn
 pb = zeros(1,4);
 pb(1) = plot(h(1),b1(:,1),b1(:,column));
 pb(2) = plot(h(2),b2(:,1),b2(:,column));
@@ -324,16 +341,48 @@ fArrow = irf_plot(1,'newfigure');
 hold(fArrow);
 axis equal
 
-ar = zeros(1,4);
-firstArrow = arrow(R./Re,(R+nTiming*arrLength)./Re,'FaceColor',arrColor(5,:),'EdgeColor',arrColor(5,:));
-ar(1) = arrow(R1./Re,(R1+nMVA1*arrLength)./Re,'FaceColor',arrColor(1,:),'EdgeColor',arrColor(1,:));
-ar(2) = arrow(R2./Re,(R2+nMVA2*arrLength)./Re,'FaceColor',arrColor(2,:),'EdgeColor',arrColor(2,:));
-ar(3) = arrow(R3./Re,(R3+nMVA3*arrLength)./Re,'FaceColor',arrColor(3,:),'EdgeColor',arrColor(3,:));
-ar(4) = arrow(R4./Re,(R4+nMVA4*arrLength)./Re,'FaceColor',arrColor(4,:),'EdgeColor',arrColor(4,:));
+ar = zeros(1,5);
+
+%-----OLD AND NOW BROKEN CODE-------
+
+% firstArrow = arrow(R./Re,(R+nTiming*arrLength)./Re,'FaceColor',arrColor(5,:),'EdgeColor',arrColor(5,:));
+% ar(1) = arrow(R1./Re,(R1+nMVA1*arrLength)./Re,'FaceColor',arrColor(1,:),'EdgeColor',arrColor(1,:));
+% ar(2) = arrow(R2./Re,(R2+nMVA2*arrLength)./Re,'FaceColor',arrColor(2,:),'EdgeColor',arrColor(2,:));
+% ar(3) = arrow(R3./Re,(R3+nMVA3*arrLength)./Re,'FaceColor',arrColor(3,:),'EdgeColor',arrColor(3,:));
+% ar(4) = arrow(R4./Re,(R4+nMVA4*arrLength)./Re,'FaceColor',arrColor(4,:),'EdgeColor',arrColor(4,:));
 
 
-delete(firstArrow) %First arrow becomes wierd
-arrow(R./Re,(R+nTiming*arrLength)./Re,'FaceColor',arrColor(5,:),'EdgeColor',arrColor(5,:))
+% delete(firstArrow) %First arrow becomes wierd
+% arrow(R./Re,(R+nTiming*arrLength)./Re,'FaceColor',arrColor(5,:),'EdgeColor',arrColor(5,:))
+
+%--------NEW CODE FOR MATLAB 2014b AND LATER--------------
+ar(1) = line([R1(1), R1(1)+nMVA1(1)*arrLength]/Re,...
+    [R1(2), R1(2)+nMVA1(2)*arrLength]/Re,...
+    [R1(3), R1(3)+nMVA1(3)*arrLength]/Re);
+ar(2) = line([R2(1), R2(1)+nMVA2(1)*arrLength]/Re,...
+    [R2(2), R2(2)+nMVA2(2)*arrLength]/Re,...
+    [R2(3), R2(3)+nMVA2(3)*arrLength]/Re);
+ar(3) = line([R3(1), R3(1)+nMVA3(1)*arrLength]/Re,...
+    [R3(2), R3(2)+nMVA3(2)*arrLength]/Re,...
+    [R3(3), R3(3)+nMVA3(3)*arrLength]/Re);
+ar(4) = line([R4(1), R4(1)+nMVA4(1)*arrLength]/Re,...
+    [R4(2), R4(2)+nMVA4(2)*arrLength]/Re,...
+    [R4(3), R4(3)+nMVA4(3)*arrLength]/Re);
+
+ar(5) = line([R(1), R(1)+nTiming(1)*arrLength]/Re,...
+    [R(2), R(2)+nTiming(2)*arrLength]/Re,...
+    [R(3), R(3)+nTiming(3)*arrLength]/Re);
+
+
+set(ar(1),'Color',arrColor(1,:))
+set(ar(2),'Color',arrColor(2,:))
+set(ar(3),'Color',arrColor(3,:))
+set(ar(4),'Color',arrColor(4,:))
+set(ar(5),'Color',arrColor(5,:))
+
+
+%ar(1).Color = arrColor(1,:);
+
 
 % check if l2/l3 is ok for each s/c.
 eigLim = 5; %Minimum value for l2/l3
@@ -354,6 +403,7 @@ plot3(R1(1)/Re,R1(2)/Re,R1(3)/Re,'ko')
 plot3(R2(1)/Re,R2(2)/Re,R2(3)/Re,'ro')
 plot3(R3(1)/Re,R3(2)/Re,R3(3)/Re,'go')
 plot3(R4(1)/Re,R4(2)/Re,R4(3)/Re,'bo')
+plot3(R(1)/Re,R(2)/Re,R(3)/Re,'Color',arrColor(5,:),'Marker','x')
 
 view(-37.5,15) %3D-view
 
