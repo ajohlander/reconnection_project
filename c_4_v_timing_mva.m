@@ -1,11 +1,12 @@
 function out = c_4_v_timing_mva(x1,x2,x3,x4,R,col)
 %C_4_V_TIMING_MVA Performs timing and minimum variance analysis on four s/c
 %field data with a graphical user interface.
-%   C_4_V_TIMING_MVA(b1,b2,b3,b4,R,column) interactive discontinuity
-%   analysis analyzer on magnetic field b1,...b4 with position R using
-%   column number 'column'. R has the form R.R1,...R.R4.
+%   C_4_V_TIMING_MVA(b1,b2,b3,b4,R) interactive discontinuity
+%   analysis analyzer on magnetic field b1,...b4 with position R.
+%   R is a structure and has the form R.R1,...R.R4.
 %   C_4_V_TIMING_MVA('B?',R) uses B1, B2, B3 and B4 from workspace
-%   C_4_V_TIMING_MVA('B?',R, column) also uses column for selecting the
+%   C_4_V_TIMING_MVA('B?','R?') also uses R1,...R4 from the workspace.
+%   C_4_V_TIMING_MVA(..., column) also uses column for selecting the
 %   component of the magnetic field. 2=x, 3=y, 4=z. If
 %   column is not passed as an argument, the default value is 2.
 %
